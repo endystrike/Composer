@@ -25,7 +25,7 @@ function license_ok = f_check_startup(swSku, swVersion, auxAesKey, auxLicPath)
         waitfor(errordlg({'Your software version is outdated: an update is required before proceeding.';' '; ...
             'Please download the latest version from the Unger Academy portal.'}, ...
             'UPDATE REQUIRED'));
-        web('https://learn.ungeracademy.com','-browser');
+        web('https://lms.ungeracademy.com','-browser');
         return;
     end
 
@@ -102,7 +102,7 @@ end
 function license_ok = verifyCrmLicense(targetSku)
     license_ok = false;
 
-    BASE_URL  = 'https://crm-test.ungeracademy.com/api/product-activations';
+    BASE_URL  = 'https://crm.ungeracademy.com/api/product-activations';
     CRED_KEY  = 'zh5ga3224qhqu3zqjy4zcqpjkbww4qhkzpe057r2quiq98dj6p8yn14re1k9g7cd';
     HTTP_OPTS = weboptions('MediaType','application/json','ContentType','json','Timeout',30);
 

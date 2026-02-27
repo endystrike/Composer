@@ -8,15 +8,19 @@ function [email, password] = f_crm_login_dialog(savedEmail, savedPassword)
     confirmed = false;
     hasSaved = nargin >= 2 && savedEmail ~= "" && savedPassword ~= "";
 
-    fig = uifigure('Name','Unger Academy - License Verification','Position',[100 100 400 250],...
+    fig = uifigure('Name','Unger Academy - License Verification','Position',[100 100 400 290],...
         'Resize','off','CloseRequestFcn',@closeFig,'WindowStyle','modal');
 
-    uilabel(fig,'Text','Email:','Position',[30 170 80 22]);
-    emailField = uieditfield(fig,'text','Position',[120 170 250 22]);
+    uilabel(fig,'Text','Please insert in the fields below the credentials you use on lms.ungeracademy.com',...
+        'Position',[30 230 340 40],'WordWrap','on');
 
-    uilabel(fig,'Text','Password:','Position',[30 130 80 22]);
-    pwdField = uieditfield(fig,'text','Position',[120 130 250 22]);
+    uilabel(fig,'Text','Email:','Position',[30 190 80 22]);
+    emailField = uieditfield(fig,'text','Position',[120 190 250 22]);
+
+    uilabel(fig,'Text','Password:','Position',[30 150 80 22]);
+    pwdField = uieditfield(fig,'text','Position',[120 150 250 22]);
     realPassword = '';
+    pwdDirty = false;
     pwdField.ValueChangingFcn = @onPwdChanging;
 
     uibutton(fig,'push','Text','Login','Position',[120 70 150 35],...
@@ -33,14 +37,24 @@ function [email, password] = f_crm_login_dialog(savedEmail, savedPassword)
 
     function onPwdChanging(~, evt)
         newVal = char(evt.Value);
-        oldLen = length(realPassword);
-        newLen = length(newVal);
-        if newLen > oldLen
-            added = newVal(oldLen+1:end);
-            realPassword = [realPassword added];
-        elseif newLen < oldLen
-            realPassword = realPassword(1:newLen);
+
+        if hasSaved && ~pwdDirty
+            % Prima modifica su campo pre-compilato: svuota tutto e
+            % riparti da zero cosi' l'utente ridigita la nuova password
+            pwdDirty = true;
+            realPassword = '';
+            pwdField.Value = '';
+            return;
+        else
+            oldLen = length(realPassword);
+            newLen = length(newVal);
+            if newLen > oldLen
+                realPassword = [realPassword newVal(oldLen+1:end)];
+            elseif newLen < oldLen
+                realPassword = realPassword(1:newLen);
+            end
         end
+
         pwdField.Value = repmat('*', 1, length(realPassword));
     end
 
